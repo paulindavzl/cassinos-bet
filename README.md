@@ -1,6 +1,6 @@
-### cassinos-bet
+# cassinos-bet
 
-###Install
+### Install
 '''
 $pip install -r requirements.txt
 '''
