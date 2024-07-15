@@ -12,23 +12,23 @@ class Game:
     
     
     #começa o jogo
-    def run(self):
+    def run(self, account):
         slots = Sl.organizer_slots()
-        result = self.__check_game(slots)
+        result = self.__check_game(slots, account)
         return slots, result
         
         
     #cria o player
-    def create_player(self, name):
-        self.player = Player(name)
+    def create_player(self, data):
+        self.player = Player(data.get("id"), data.get("name"), data.get("cash"))
     
     
     #verifica se o resultado do jogo
-    def __check_game(self, slots):
+    def __check_game(self, slots, account):
         result = Sl.check(slots)
         if result[0] == True:
             win = float(f"{result[1]: .2f}")
-            self.player.win(self.bet + (self.bet * win))
+            self.player.win(self.bet + (self.bet * win), account)
             if self.auto != False:
                 self.wins += self.bet + (self.bet * win)
         return result

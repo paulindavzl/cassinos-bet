@@ -1,7 +1,8 @@
 from core.game import Game, Sl
+from core.commands import Commands
+import database.connect_account as account
 import os
 import time as tm
-from core.commands import Commands
 
 class RenderGame():
     def __init__(self):
@@ -27,27 +28,71 @@ class RenderGame():
         
         self.__start()
         
+    
+    #entra na conta do usuário
+    def login(self):
+        os.system("clear")
+        print(f"{self.color['y']}=--==--==--=[ Entrar ou Criar Conta ]=--==--==--=")
+        email = input(f"{self.color['y']}Informe seu e-mail (@ e .com obrigatórios)\n>>{self.color['w']}")
+        password = input(f"{self.color['y']}Informe sua senha (6 - 12 caractéres)\n>>{self.color['w']}")
+            
+        data = {
+            "email": email,
+            "password": password
+        }
+        result = account.login(data)
+        
+        if result.get("result") == "Success":
+            self.game.create_player(result)
+            self.render_game(anim = True)
+        
+        elif result.get("result") == "ErrorPassword":
+            input(f"{self.color['r']}Senha incorreta!\n{self.color['y']}Enter para continuar\n")
+            self.login()
+        else:
+            return self.register(data)
+        
+        
+    #cria uma conta
+    def register(self, data):
+        os.system("clear")
+        print(f"{self.color['y']}=--==--==--=[ Criar Conta ]=--==--==--=")
+        print(f"""{self.color['y']}Parece que você ainda não possui conta com esses dados! Vamos criar uma para você!
+----------Email: {self.color['w']}{data.get('email')}{self.color['y']}
+----------Senha: {self.color['w']}{data.get('password')}{self.color['y']}
+""")
+        name = input(f"{self.color['y']}Informe um nome de usuário (4 - 22 letras)\n>>{self.color['w']}")
+        data["name"] = name
+        result = account.register(data)
+        
+        if result.get("result") == "Success":
+            self.game.create_player(result)
+            self.render_game(anim = True)
+         
+        elif result.get("result") == "ErrorPassword":
+            input(f"{self.color['r']}Senha muito curta ou longa! (6 - 12 caractéres)!\n{self.color['y']}Enter para continuar\n")
+            self.login()
+        
+        elif result.get("result") == "ErrorTypeEmail":
+            input(f"{self.color['r']}Formato do e-mail inválido!\n{self.color['y']}Enter para continuar\n")
+            self.login()
+            
+        else:
+            input(f"{self.color['r']}Nome muito curto ou longo! (4 - 22 letras)!\n{self.color['y']}Enter para continuar\n")
+            self.register(data)
+        
         
     #recebe o nome do player
     def __start(self):
         os.system("clear")
-        name = input(f"{self.color['y']}Informe seu nome (3 - 10 letras)\n>>{self.color['w']}").strip()
-        
-        if 10 >= len(name) >= 3:
-            self.game.create_player(name.title())
+        #tenta fazer login automático
+        result = account.check_login()
+        if result.get("result") == "Success":
+            self.game.create_player(result)
             self.render_game(anim = True)
-        elif len(name) == 0:
-            print(f"{self.color['r']}Informe um nome por favor!{self.color['y']}")
-            tm.sleep(3)
-            self.__start()
-        elif len(name) < 3:
-            print(f"{self.color['r']}Este nome é muito curto!{self.color['y']}")
-            tm.sleep(3)
-            self.__start()
+            
         else:
-            print(f"{self.color['r']}Este nome é muito grande!{self.color['y']}")
-            tm.sleep(3)
-            self.__start()
+            self.login()
             
     
     #renderiza o jogo
@@ -127,9 +172,9 @@ class RenderGame():
     
     #comeca o jogo
     def run(self):
-            if self.game.player.toBet(self.game.bet) != False:
+            if self.game.player.toBet(self.game.bet, account) != False:
                 self.__animation()
-                results = self.game.run()
+                results = self.game.run(account)
                 self.render_game(results[0], big_win = results[1][2])
                 
                 if results[1][0] == True:
