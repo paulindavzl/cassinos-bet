@@ -20,7 +20,7 @@ def check_login():
                 return {"result": "ErrorLogin"}
             
     except:
-        with open("account.txt", "w") as connect:
+        with open("./database/account.txt", "w") as connect:
             connect.write("False")
             return {"result": "ErrorLogin"}
 
@@ -39,6 +39,12 @@ def login(data):
         save_login(connect.get("id"), connect.get("password"))
         
     return connect
+
+
+#sai da conta do cliente
+def exit():
+    with open("./database/account.txt", "w") as connect:
+        connect.write("False")
 
 
 #cria uma conta para o cliente

@@ -26,7 +26,7 @@ class RenderGame():
         self.game = Game()
         self.cmd = Commands(self.color, self.game)
         
-        self.__start()
+        self.start()
         
     
     #entra na conta do usuário
@@ -50,7 +50,11 @@ class RenderGame():
             input(f"{self.color['r']}Senha incorreta!\n{self.color['y']}Enter para continuar\n")
             self.login()
         else:
-            return self.register(data)
+            opc = input(f"{self.color['r']}Não existe conta com esses dados!\n{self.color['y']}Digite {self.color['w']}/new {self.color['y']}para criar uma conta ou qualquer outra coisa para tentar novamente\n>>")
+            if opc.strip() == "/new":
+                return self.register(data)
+            else:
+                self.login()
         
         
     #cria uma conta
@@ -77,13 +81,21 @@ class RenderGame():
             input(f"{self.color['r']}Formato do e-mail inválido!\n{self.color['y']}Enter para continuar\n")
             self.login()
             
-        else:
+        elif result.get("result") == "ErrorSizeName":
             input(f"{self.color['r']}Nome muito curto ou longo! (4 - 22 letras)!\n{self.color['y']}Enter para continuar\n")
+            self.register(data)
+            
+        elif result.get("result") == "ErrorEmail":
+            input(f"{self.color['r']}Este e-mail já possui cadastro! {self.color['y']}Tente outro!\nEnter para continuar\n")
+            self.login()
+            
+        elif result.get("result") == "ErrorUsername":
+            input(f"{self.color['r']}Este nome de usuário já existe! {self.color['y']}Tente outro!\nEnter para continuar\n")
             self.register(data)
         
         
     #recebe o nome do player
-    def __start(self):
+    def start(self):
         os.system("clear")
         #tenta fazer login automático
         result = account.check_login()
@@ -150,6 +162,7 @@ class RenderGame():
 -----{self.color['w']}/wins {self.color['y']}para ver as formas de ganhar e seus pagamentos
 -----{self.color['w']}/auto {self.color['y']}para giros automáticos
 -----{self.color['w']}/turbo {self.color['y']}para ativar/desativar o modo turbo
+---------{self.color['r']}/exit {self.color['y']}para sair da conta atual
 {'=--='*10}""")
 
     
@@ -208,8 +221,13 @@ if __name__ == "__main__":
             
             if len(command) >= 1:
                 if command.strip()[0] == "/":
-                    RD.cmd.identifier_commands(command)
-                    run_game()
+                    if command.strip() != "/exit":
+                        RD.cmd.identifier_commands(command)
+                        run_game()
+                    else:
+                        account.exit()
+                        RD.start()
+                        run_game()
         
         else:
             RD.render_game(anim = True)
@@ -238,7 +256,12 @@ if __name__ == "__main__":
             
             if len(command) >= 1:
                 if command.strip()[0] == "/":
-                    RD.cmd.identifier_commands(command)
-                    run_game()
+                    if command.strip() != "/exit":
+                        RD.cmd.identifier_commands(command)
+                        run_game()
+                    else:
+                        account.exit()
+                        RD.start()
+                        run_game()
                     
     run_game()
