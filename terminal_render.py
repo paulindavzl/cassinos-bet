@@ -1,8 +1,10 @@
-from core.game import Game, Sl
-from core.commands import Commands
-import database.connect_account as account
 import os
 import time as tm
+from core.game import Game, Sl
+from core.commands import Commands
+import database.connect_account as Account
+
+account = Account.ConnectAccount()
 
 class RenderGame():
     def __init__(self):
@@ -24,6 +26,7 @@ class RenderGame():
         }
         
         self.game = Game()
+        self.game.account = account
         self.cmd = Commands(self.color, self.game)
         
         self.start()
@@ -50,7 +53,7 @@ class RenderGame():
             input(f"{self.color['r']}Senha incorreta!\n{self.color['y']}Enter para continuar\n")
             self.login()
         else:
-            opc = input(f"{self.color['r']}Não existe conta com esses dados!\n{self.color['y']}Digite {self.color['w']}/new {self.color['y']}para criar uma conta ou qualquer outra coisa para tentar novamente\n>>")
+            opc = input(f"{self.color['r']}Não existe conta com esses dados!\n{self.color['y']}Digite {self.color['w']}/new {self.color['y']}para criar uma conta ou qualquer outra coisa para tentar novamente\n>>{self.color['w']}")
             if opc.strip() == "/new":
                 return self.register(data)
             else:
@@ -65,7 +68,7 @@ class RenderGame():
 ----------Email: {self.color['w']}{data.get('email')}{self.color['y']}
 ----------Senha: {self.color['w']}{data.get('password')}{self.color['y']}
 """)
-        name = input(f"{self.color['y']}Informe um nome de usuário (4 - 22 letras)\n>>{self.color['w']}")
+        name = input(f"{self.color['y']}Informe um nome de usuário (4 - 22 letras)\n>>{self.color['w']}").title()
         data["name"] = name
         result = account.register(data)
         
@@ -77,11 +80,11 @@ class RenderGame():
             input(f"{self.color['r']}Senha muito curta ou longa! (6 - 12 caractéres)!\n{self.color['y']}Enter para continuar\n")
             self.login()
         
-        elif result.get("result") == "ErrorTypeEmail":
+        elif result.get("result") == "ErrorEmailType":
             input(f"{self.color['r']}Formato do e-mail inválido!\n{self.color['y']}Enter para continuar\n")
             self.login()
             
-        elif result.get("result") == "ErrorSizeName":
+        elif result.get("result") == "ErrorUsernameSize":
             input(f"{self.color['r']}Nome muito curto ou longo! (4 - 22 letras)!\n{self.color['y']}Enter para continuar\n")
             self.register(data)
             
@@ -187,7 +190,7 @@ class RenderGame():
     def run(self):
             if self.game.player.toBet(self.game.bet, account) != False:
                 self.__animation()
-                results = self.game.run(account)
+                results = self.game.run()
                 self.render_game(results[0], big_win = results[1][2])
                 
                 if results[1][0] == True:

@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#URL {
+    display: none;
+}
+
+.full-container {
+    padding: 5px;
+    margin: 5px;
+    display: grid;
+    place-items: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+form {
+    padding: 5px;
+    margin: 5px;
+    border: 3px solid #f1f1f1;
+    max-width: 600px;
+}
+
+input[type=text],input[type=email], input[type=password] {
+    width: 100%; 
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+label {
+    padding-left: 8px;
+}
+
+button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: 100%;
+    border: 3px white solid;
+    border-radius: 20px;
+    font-size: 120%
+}
+
+p {
+    background-color: tranparent;
+    color: #247BA0;
+    margin: 8px 0;
+    border-radius: 20px;
+    text-align: center;
+}
+
+p a {
+    font-size: 80%;
+    color: #247BA0;
+}
+
+p a:visited {
+    color: #247BA0;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
+}
+
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+media screen and (max-width: 300px) {
+    span.psw {
+        display: block;
+        float: none;
+    }
+}

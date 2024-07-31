@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Cassino's Bet - Login</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    </head>
+    <body>
+        <div class="full-container">
+            <h2>Registre sua conta</h2>
+    
+            <form>
+                <var id="URL">{{ url_for("users_routes.login") }} </var>
+                
+                <div class="container">
+                    <label for="email"><b>Email</b></label>
+                    <input type="email" placeholder="Email" id="email" name="email" required>
+                
+                    <label for="password"><b>Senha</b></label>
+                    <input type="password" id="password" placeholder="Senha" name="password" required>
+                        
+                    <button 
+                        type="submit" 
+                        onclick="login(); return false">
+                            Entrar
+                    </button>
+                    <p>Não tenho conta!<br><a href="{{ url_for('users_routes.register') }}">Quero criar uma!</a></p>
+                </div>
+            </form>
+        </div>
+        
+        <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+        
+        <script>
+            function login() {
+                //obtém as informações de login
+                var email = document.getElementById("email").value;
+                var password = document.getElementById("password").value;
+                
+                //configura algumas opções de requisição
+                const data = {
+                    email: email,
+                    password: password,
+                };
+                    
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                };
+                
+                //faz uma requisição POST para entrar na conta do usuário
+                fetch("{{ URL_POST_LOGIN }}", options)
+                    .then(response => response.json())
+                    .then(try_login => {
+                        analyzeLogin(try_login)
+                    })
+                    .catch(error => {
+                        alert("Houve um erro desconhecido! Tente novamente!")
+                    })
+            }
+        </script>
+
+    </body>
+</html>

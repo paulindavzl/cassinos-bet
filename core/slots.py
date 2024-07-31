@@ -12,6 +12,13 @@ class Slots:
         self.__slots_cards = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "2", "3", "4", "5", "6", "7", "8", "9", "2", "3", "4", "5", "6", "7", "8", "9", "J", "Q", "K"]
         self.__slots_naipes = ["hearts", "swords", "golds", "woods", "golds", "woods"]
         self.__slots_alternatives = {"A": "1", "J": "10", "Q": "11", "K": "12"}
+        
+        #utilizado na versão WEB para mostrar os ganhos
+        self._slots_wins = [
+            "sl", "sl", "sl", 
+            "sl", "sl", "sl", 
+            "sl", "sl", "sl"
+        ]
     
     #sorteia as cartas
     def __raffle_slots(self):
@@ -70,6 +77,11 @@ class Slots:
     #verfiica se o slots premiam
     def check(self, slots):
         self.__multi = 0
+        self._slots_wins = [
+            "sl", "sl", "sl", 
+            "sl", "sl", "sl", 
+            "sl", "sl", "sl"
+        ]
         self.__result = False
         self.__sequence = 0
         self.__big_win = False
@@ -103,7 +115,7 @@ class Slots:
             return slot
         
         #verifica a sequência dos slots
-        def sequential(slots):
+        def sequential(slots, slot_win, position = False):
             slot_check = alternative_cards(slots)
             cards = [slot_check[0][0], slot_check[1][0], slot_check[2][0]]
             cards = sorted(cards, key = int)
@@ -122,6 +134,31 @@ class Slots:
                     self.__multi += values_naipes + values_cards
                     self.__result = True
                     self.__sequence += 1
+                    
+                    #utilizado apenas na versão WEB
+                    if position != False:
+                        if position == 0:
+                            self._slots_wins[0] = "win"
+                            self._slots_wins[1] = "win"
+                            self._slots_wins[2] = "win"
+                        elif position == 1:
+                            self._slots_wins[3] = "win"
+                            self._slots_wins[4] = "win"
+                            self._slots_wins[5] = "win"
+                        elif position == 2:
+                            self._slots_wins[6] = "win"
+                            self._slots_wins[7] = "win"
+                            self._slots_wins[8] = "win"
+                            
+                    else:
+                        if slot_win == "TB":
+                            self._slots_wins[0] = "win"
+                            self._slots_wins[4] = "win"
+                            self._slots_wins[8] = "win"
+                        elif slot_win == "BT":
+                            self._slots_wins[2] = "win"
+                            self._slots_wins[4] = "win"
+                            self._slots_wins[6] = "win"
       
         #verificia a diagonal de cima pra baixo
         def dTopBottom(slots):
@@ -144,9 +181,12 @@ class Slots:
                     self.__multi += values_naipes + values_cards
                     self.__result = True
                     self.__sequence += 1
+                    self._slots_wins[0] = "win"
+                    self._slots_wins[4] = "win"
+                    self._slots_wins[8] = "win"
                 
             else:
-                sequential(slot)
+                sequential(slot, "TB")
                 
         #verificia a diagonal de baixo para cima
         def dBottomTop(slots):
@@ -169,9 +209,12 @@ class Slots:
                     self.__multi += values_naipes + values_cards
                     self.__result = True
                     self.__sequence += 1
+                    self._slots_wins[2] = "win"
+                    self._slots_wins[4] = "win"
+                    self._slots_wins[6] = "win"
                 
             else:
-                sequential(slot)
+                sequential(slot, "BT")
                 
         #verifica se existe ganhos na horizontal
         def horizontal(slots):
@@ -191,9 +234,21 @@ class Slots:
                         self.__multi += values_naipes + values_cards
                         self.__result = True
                         self.__sequence += 1
+                        if position == 0:
+                            self._slots_wins[0] = "win"
+                            self._slots_wins[1] = "win"
+                            self._slots_wins[2] = "win"
+                        elif position == 1:
+                            self._slots_wins[3] = "win"
+                            self._slots_wins[4] = "win"
+                            self._slots_wins[5] = "win"
+                        elif position == 2:
+                            self._slots_wins[6] = "win"
+                            self._slots_wins[7] = "win"
+                            self._slots_wins[8] = "win"
                     
                 else:
-                    sequential(item)
+                    sequential(item, "HR", position)
                 
                 position += 1
                 
@@ -211,6 +266,11 @@ class Slots:
                 self.__result = True
                 self.__big_win = "Full Black"
                 self.__sequence = 5
+                self._slots_wins[0:] = [
+                    "win", "win", "win",
+                    "win", "win", "win",
+                    "win", "win", "win"
+                ]
         
         #verifica se todos os slots tem naipes vermelhos
         def fullRed(slots):
@@ -226,6 +286,11 @@ class Slots:
                 self.__result = True
                 self.__big_win = "Full Red"
                 self.__sequence = 5
+                self._slots_wins[0:] = [
+                    "win", "win", "win",
+                    "win", "win", "win",
+                    "win", "win", "win"
+                ]
                 
         #verifica se os naipes verticais são iguais
         def vertical_naipes(slots):
@@ -237,6 +302,10 @@ class Slots:
                 if naipes[0] == naipes[1] and naipes[1] == naipes[2]:
                     self.__multi += self.__naipes_values(naipes)
                     self.__result = True
+                    self._slots_wins[pos_line] = "win"
+                    self._slots_wins[pos_line + 3] = "win"
+                    self._slots_wins[pos_line + 6] = "win"
+                    
         
         if slots[0][0][1] != "wild":
             dTopBottom(slots)
@@ -252,11 +321,16 @@ class Slots:
             self.__sequence = 5
             self.__result = True
             self.__big_win = "Combo de Wilds"
+            self._slots_wins[0:] = [
+                    "win", "win", "win",
+                    "win", "win", "win",
+                    "win", "win", "win"
+                ]
         
         if self.__sequence >= 5:
             self.__multi *= 10
         
-        return self.__result, float(f"{self.__multi: .2f}"), self.__big_win
+        return self.__result, float(f"{self.__multi: .2f}"), self.__big_win, self._slots_wins
         
         
     #calcula a chance de soltar combo de wilds

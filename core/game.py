@@ -9,19 +9,20 @@ class Game:
         self.turbo = False
         self.auto = False
         self.wins = 0
+        self.player = Player()
+        self.account = None
     
     
     #começa o jogo
-    def run(self, account):
+    def run(self):
         slots = Sl.organizer_slots()
-        result = self.__check_game(slots, account)
+        result = self.__check_game(slots, self.account)
         return slots, result
         
         
     #cria o player
     def create_player(self, data):
-        self.player = Player(data.get("id"), data.get("name"), data.get("cash"))
-    
+        self.player.insertPlayer(data)
     
     #verifica se o resultado do jogo
     def __check_game(self, slots, account):
