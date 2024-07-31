@@ -5,7 +5,7 @@
 $pip install -r requirements.txt
 '''
 
-### Run in web
+### Run in web (developing)
 '''
 $python3 app.py
 '''
